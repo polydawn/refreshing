@@ -14,7 +14,7 @@ frm="$(cat <<EOF
 				"/task":     "$(hitch show "refreshing.polydawn.net/demo/hello-go-src:vtmp:src")"
 			},
 			"action": {
-				"exec": ["/bin/bash", "-c", "set -euo pipefail; export GOROOT=/app/go/go; export PATH=$PATH:/app/go/go/bin; "]
+				"exec": ["/bin/bash", "-c", "set -euo pipefail; export GOROOT=/app/go/go; export PATH=$PATH:/app/go/go/bin; mkdir target; go build -o target/hello"]
 			},
 			"outputs": {
 				"/task/target": {"packtype": "tar"}

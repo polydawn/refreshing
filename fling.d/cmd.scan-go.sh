@@ -4,8 +4,6 @@ set -euo pipefail
 . env.shlib
 cd "$FLING_BASE"
 
-hitch init || \
-	{ e=$?; [[ $e -eq 7 || $e -eq 8 ]] || exit $e; } ## it's fine if it exists already :)
 hitch catalog create "refreshing.polydawn.net/ports/go" || \
 	{ e=$?; [[ $e -eq 7 || $e -eq 8 ]] || exit $e; } ## it's fine if it exists already :)
 

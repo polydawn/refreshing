@@ -31,7 +31,8 @@ frm="$(cat <<EOF
 	}
 EOF
 )"
-echo "$frm" | jq .
+echo "$frm" | jq .formula
 
 >&2 echo Running formula the First...
-rr1="$(repeatr run <(echo "$frm") | tee /dev/stderr)"
+rr1="$(repeatr run <(echo "$frm"))"
+echo "$rr1" | jq .

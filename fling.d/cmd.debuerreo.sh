@@ -12,6 +12,9 @@ hitch release add-item "script" "$(rio pack tar debuerreotype --target=ca+file:/
 hitch release commit
 
 >&2 echo Templating formula the First...
+## Some comments about image fabrication:
+##  - we do include 'ca-certificates'.  This is not great for updatability, but you can overlay it with a newer one if you want.  We figured it's better to be not-broken out of box.
+##  - we do set a default '/etc/resolv.conf' file.  Again, the reasoning is based on practicality and wanting things to work out of box.
 frm="$(cat <<EOF
 	{
 		"formula": {
@@ -29,7 +32,7 @@ frm="$(cat <<EOF
 					"DEBOOTSTRAP_DIR": "/app/debootstrap/debootstrap-1.0.87/",
 					"PATH": "/app/debuerreotype/scripts/:/app/debootstrap/debootstrap-1.0.87/:/sbin:/usr/sbin:/bin:/usr/bin"
 				},
-				"exec": ["/bin/bash", "-c", "set -euo pipefail; apt update ; apt install -y wget ; debuerreotype-init --no-merged-usr /out \$DISTRIBUTION \$TIMESTAMP "]
+				"exec": ["/bin/bash", "-c", "set -euo pipefail; apt update ; apt install -y wget ; debuerreotype-init --no-merged-usr /out \$DISTRIBUTION \$TIMESTAMP ; debuerreotype-minimizing-config /out ; debuerreotype-apt-get /out update -qq ; debuerreotype-apt-get /out dist-upgrade -yqq ; debuerreotype-apt-get /out install -y --no-install-recommends inetutils-ping iproute2 wget curl ca-certificates ; debuerreotype-slimify /out ; debuerreotype-gen-sources-list /out \$DISTRIBUTION http://deb.debian.org/debian http://security.debian.org ; echo 'nameserver 8.8.8.8' > /etc/resolv.conf ; "]
 			},
 			"outputs": {
 				"/out": {"packtype": "tar", "filters": {"uid":"keep", "gid":"keep", "sticky":"keep"}}
@@ -46,7 +49,6 @@ frm="$(cat <<EOF
 	}
 EOF
 )"
-#sed 's#/usr/share/debootstrap#\$PWD#g'
 echo "$frm" | jq .formula
 
 >&2 echo Running formula the First...

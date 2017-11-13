@@ -44,6 +44,25 @@ frm="$(cat <<EOF
 					debuerreotype-slimify /out
 					debuerreotype-gen-sources-list /out \$DISTRIBUTION http://deb.debian.org/debian http://security.debian.org
 					echo 'nameserver 8.8.8.8' > /out/etc/resolv.conf
+					# scrape out sources of unreproducibility
+					# (documented in debuerreotype/.tar-exclude, but we replicate here because we don't use tar like that.)
+					set +e # if these paths are already empty, that's surely fine.
+					rm -r /out/debuerreotype-epoch
+					rm -r /out/proc/*
+					rm -r /out/sys/*
+					rm -r /out/var/cache/apt/*
+					rm -r /out/var/lib/apt/lists/*
+					rm -r /out/etc/apt/apt.conf.d/01autoremove-kernels
+					rm -r /out/var/log/apt/history.log
+					rm -r /out/var/log/apt/term.log
+					rm -r /out/run/motd.dynamic
+					rm -r /out/etc/apt/trustdb.gpg
+					rm -r /out/var/lib/systemd/catalog/database
+					# more (these are in debuerreotype-fixup instead of the tar-excludes for some reason)
+					rm /out/var/log/dpkg.log
+					rm /out/var/log/bootstrap.log
+					rm /out/var/log/alternatives.log
+					rm /out/var/cache/ldconfig/aux-cache
 		outputs:
 			"/out":
 				packtype: "tar"
